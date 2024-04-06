@@ -20,4 +20,25 @@ const createCurrentUser = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' })
   }
 }
-export default createCurrentUser
+
+const updateCurrentUser = async (req: Request, res: Response) => {
+  try {
+    const { name, addressLine1, country, city } = req.body
+    const user = await User.findById(req.userId)
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+    user.name = name
+    user.address = addressLine1
+    user.city = city
+    user.country = country
+    await user.save()
+    res.send(user)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: 'Error updating user' })
+  }
+}
+
+export default { createCurrentUser, updateCurrentUser }
